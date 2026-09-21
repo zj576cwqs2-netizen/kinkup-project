@@ -5,19 +5,43 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreArticleRequest;
 use App\Models\Article;
 use App\Models\ArticleImage;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 
 class ArticleController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $articles = Article::with(['user', 'images'])
-            ->where('status', 'published')
-            ->latest('published_at')
-            ->paginate(20);
+        $query = Article::with(['user', 'images'])
+            ->where('status', 'published');
+
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('title', 'like', '%' . $request->search . '%')
+                  ->orWhere('content', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        if ($request->filled('author')) {
+            $query->whereHas('user', function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->author . '%');
+            });
+        }
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('published_at', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('published_at', '<=', $request->date_to);
+        }
+
+        $articles = $query->latest('published_at')->paginate(20)->withQueryString();
 
         return view('articles.index', compact('articles'));
     }
@@ -74,7 +98,7 @@ class ArticleController extends Controller
      */
     public function edit(Article $article)
     {
-        abort_if($article->user_id !== Auth::id(), 403);
+        Gate::authorize('update', $article);
 
         $article->load(['images']);
 
@@ -86,7 +110,7 @@ class ArticleController extends Controller
      */
     public function update(StoreArticleRequest $request, Article $article)
     {
-        abort_if($article->user_id !== Auth::id(), 403);
+        Gate::authorize('update', $article);
 
         $validated = $request->validated();
 
@@ -99,8 +123,25 @@ class ArticleController extends Controller
                 : null,
         ]);
 
+        if ($request->hasFile('image')) {
+            // 既存画像があれば、ファイルとレコードの両方を削除
+            $existing = $article->images->first();
+            if ($existing) {
+                Storage::disk('public')->delete($existing->image_path);
+                $existing->delete();
+            }
+
+            $path = $request->file('image')->store('articles', 'public');
+
+            ArticleImage::create([
+                'article_id' => $article->id,
+                'image_path' => $path,
+                'sort_order' => 0,
+            ]);
+        }
+
         return redirect()->route('articles.show', $article)
-            ->with('success', '更新しました！');
+            ->with('success', '更新完了！');
     }
 
     /**
@@ -108,11 +149,15 @@ class ArticleController extends Controller
      */
     public function destroy(Article $article)
     {
-        abort_if($article->user_id !== Auth::id(), 403);
+        Gate::authorize('delete', $article);
+
+        foreach ($article->images as $image) {
+            Storage::disk('public')->delete($image->image_path);
+        }
 
         $article->delete();
 
         return redirect()->route('articles.index')
-            ->with('success', '削除しました！');
+            ->with('success', '削除完了！');
     }
 }
