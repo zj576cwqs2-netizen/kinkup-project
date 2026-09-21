@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreArticleRequest;
 use App\Models\Article;
-use Illuminate\Http\Request;
+use App\Models\ArticleImage;
 use Illuminate\Support\Facades\Auth;
 
 class ArticleController extends Controller
@@ -32,14 +33,9 @@ class ArticleController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreArticleRequest $request)
     {
-        $validated = $request->validate([
-            'title' => ['required', 'string', 'max:200'],
-            'content' => ['required', 'string'],
-            'status' => ['required', 'in:draft,published'],
-            'image' => ['nullable', 'image', 'max:5120'], // 5MB
-        ]);
+        $validated = $request->validated();
 
         $article = Article::create([
             'user_id' => Auth::id(),
@@ -52,7 +48,8 @@ class ArticleController extends Controller
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('articles', 'public');
 
-            $article->images()->create([
+            ArticleImage::create([
+                'article_id' => $article->id,
                 'image_path' => $path,
                 'sort_order' => 0,
             ]);
@@ -87,15 +84,11 @@ class ArticleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Article $article)
+    public function update(StoreArticleRequest $request, Article $article)
     {
         abort_if($article->user_id !== Auth::id(), 403);
 
-        $validated = $request->validate([
-            'title' => ['required', 'string', 'max:200'],
-            'content' => ['required', 'string'],
-            'status' => ['required', 'in:draft,published'],
-        ]);
+        $validated = $request->validated();
 
         $article->update([
             'title' => $validated['title'],

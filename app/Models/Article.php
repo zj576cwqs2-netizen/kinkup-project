@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Article extends Model
 {
@@ -11,21 +12,25 @@ class Article extends Model
         'user_id',
         'title',
         'content',
-        'post_date',
-        'servings'
+        'status',
+        'published_at',
+    ];
+
+    protected $casts = [
+        'published_at' => 'datetime',
     ];
 
     public function images(): HasMany
     {
-        return $this->hasMany('App\\Models\\ArticleImage');
+        return $this->hasMany(ArticleImage::class);
     }
-    public function user()
+
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
-
     }
 
-    public function viewingHistories()
+    public function viewingHistories(): HasMany
     {
         return $this->hasMany('App\\Models\\ViewingHistory');
     }
