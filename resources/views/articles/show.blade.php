@@ -63,6 +63,52 @@
                 </div>
 
             </div>
+
+            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg mt-6">
+                <h2 class="text-xl font-bold mb-4">レビュー（{{ $article->reviews->count() }}件）</h2>
+
+                @forelse ($article->reviews as $review)
+                    <div class="border-b py-4">
+                        <div class="flex items-center gap-2">
+                            <span class="text-yellow-500">
+                                {{ str_repeat('★', $review->rating) }}{{ str_repeat('☆', 5 - $review->rating) }}
+                            </span>
+                            <span class="text-sm text-gray-500">{{ $review->user->name }}</span>
+                        </div>
+                        <p class="mt-2 text-gray-700 whitespace-pre-line">{{ $review->comment }}</p>
+                    </div>
+                @empty
+                    <p class="text-gray-500">まだレビューがありません。</p>
+                @endforelse
+
+                @auth
+                    <form method="POST" action="{{ route('articles.reviews.store', $article) }}" class="mt-6">
+                        @csrf
+
+                        <div class="mb-4">
+                            <label for="rating" class="block text-sm font-medium text-gray-700">評価</label>
+                            <select id="rating" name="rating"
+                                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                                @for ($i = 5; $i >= 1; $i--)
+                                    <option value="{{ $i }}">{{ str_repeat('★', $i) }}（{{ $i }}）</option>
+                                @endfor
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="comment" class="block text-sm font-medium text-gray-700">コメント</label>
+                            <textarea id="comment" name="comment" rows="4"
+                                      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                                      required maxlength="500"></textarea>
+                        </div>
+
+                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md">
+                            レビューを投稿する
+                        </button>
+                    </form>
+                @endauth
+            </div>
+
         </div>
     </div>
 </x-app-layout>

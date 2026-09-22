@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreArticleRequest;
 use App\Models\Article;
 use App\Models\ArticleImage;
+use App\Models\ViewingHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -88,7 +89,12 @@ class ArticleController extends Controller
      */
     public function show(Article $article)
     {
-        $article->load(['user', 'images']);
+        $article->load(['user', 'images', 'reviews.user']);
+
+        ViewingHistory::updateOrCreate(
+            ['user_id' => Auth::id(), 'article_id' => $article->id],
+            ['viewed_at' => now()]
+        );
 
         return view('articles.show', compact('article'));
     }
@@ -141,7 +147,7 @@ class ArticleController extends Controller
         }
 
         return redirect()->route('articles.show', $article)
-            ->with('success', '更新完了！');
+            ->with('success', '更新しました！');
     }
 
     /**
@@ -158,6 +164,6 @@ class ArticleController extends Controller
         $article->delete();
 
         return redirect()->route('articles.index')
-            ->with('success', '削除完了！');
+            ->with('success', '削除しました！');
     }
 }

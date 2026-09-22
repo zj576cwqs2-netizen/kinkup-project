@@ -32,6 +32,11 @@ class Article extends Model
 
     public function viewingHistories(): HasMany
     {
-        return $this->hasMany('App\\Models\\ViewingHistory');
+        return $this->hasMany(ViewingHistory::class);
+    }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany('App\\Models\\Review');
     }
 }
