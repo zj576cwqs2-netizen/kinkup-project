@@ -53,24 +53,11 @@
                 </div>
             </form>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 @forelse ($articles as $article)
-                    <div class="bg-white shadow-md rounded-lg p-4">
-                        @if($article->images->isNotEmpty())
-                            <img src="{{ asset('storage/' . $article->images->first()->image_path) }}"
-                                 alt="{{ $article->title }}"
-                                 class="w-full h-48 object-cover rounded">
-                        @endif
-
-                        <h2 class="text-xl font-bold mt-4">{{ $article->title }}</h2>
-                        <p class="text-gray-600 mt-2">{{ Str::limit($article->content, 100) }}</p>
-
-                        <div class="mt-4">
-                            <a href="{{ route('articles.show', $article) }}" class="text-blue-600">詳細を見る</a>
-                        </div>
-                    </div>
+                    <x-article-card :article="$article" />
                 @empty
-                    <p class="text-gray-500 col-span-3">
+                    <p class="text-gray-500 col-span-full">
                         @if (request()->anyFilled(['search', 'author', 'date_from', 'date_to']))
                             条件に一致する記事がありません。
                         @else

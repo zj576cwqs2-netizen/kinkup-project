@@ -18,7 +18,7 @@ class ArticleController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Article::with(['user', 'images'])
+        $query = Article::with(['user', 'images', 'reviews'])
             ->where('status', 'published');
 
         if ($request->filled('search')) {
@@ -97,9 +97,9 @@ class ArticleController extends Controller
         );
 
         $isFavorited = $article->favorites()->where('user_id', Auth::id())->exists();
-$favoritesCount = $article->favorites()->count();
+        $favoritesCount = $article->favorites()->count();
 
-return view('articles.show', compact('article', 'isFavorited', 'favoritesCount'));
+        return view('articles.show', compact('article', 'isFavorited', 'favoritesCount'));
     }
 
     /**
