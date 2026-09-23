@@ -1,6 +1,17 @@
-public function toggle(Article, $article)
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Article;
+use Illuminate\Support\Facades\Auth;
+
+class FavoriteController extends Controller
 {
-    $user = auth()->user();
+public function toggle(Article $article)
+{
+    $user = Auth::user();
+
+    /** @var \App\Models\User $user */
 
     if ($user->favorites()->where('article_id', $article->id)->exists()){
          $user->favorites()->detach($article->id);
@@ -15,4 +26,4 @@ public function toggle(Article, $article)
         'count' => $article->favorites()->count()
     ]);
 } 
-    
+}

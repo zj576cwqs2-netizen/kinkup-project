@@ -30,8 +30,8 @@ class User extends Authenticatable
         ];
     }
 
-    public function favorites()
+    public function favorites(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
-        return $this->belongsToMany(article::class, 'favorites');
+        return $this->belongsToMany(Article::class, 'favorites');
     }
 }

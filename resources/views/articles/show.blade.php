@@ -29,6 +29,14 @@
                     @endif
                 </div>
 
+                <div class="mb-4">
+                    <x-favorite-button
+                        :article="$article"
+                        :is-favorited="$isFavorited"
+                        :favorites-count="$favoritesCount"
+                    />
+                </div>
+
                 <p class="text-sm text-gray-500 mb-6">
                     {{ $article->user->name }} ・
                     {{ optional($article->published_at)->format('Y年m月d日') ?? '未公開' }}

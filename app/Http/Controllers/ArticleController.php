@@ -96,7 +96,10 @@ class ArticleController extends Controller
             ['viewed_at' => now()]
         );
 
-        return view('articles.show', compact('article'));
+        $isFavorited = $article->favorites()->where('user_id', Auth::id())->exists();
+$favoritesCount = $article->favorites()->count();
+
+return view('articles.show', compact('article', 'isFavorited', 'favoritesCount'));
     }
 
     /**

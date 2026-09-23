@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Article extends Model
 {
@@ -37,6 +38,10 @@ class Article extends Model
 
     public function reviews(): HasMany
     {
-        return $this->hasMany('App\\Models\\Review');
+        return $this->hasMany(Review::class);
+    }
+    public function favorites()
+    {
+        return $this->belongsToMany(User::class, 'favorites');
     }
 }
