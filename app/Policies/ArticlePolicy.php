@@ -1,13 +1,19 @@
+<?php
+
+namespace App\Policies;
+
+use App\Models\User;
+use App\Models\Article;
+
 class ArticlePolicy
 {
-    public function update(User $user, Article $article)
+    public function update(User $user, Article $article): bool
     {
-        return $user->id === $article->user_id;
+        return $user->id === $article->user->id;
     }
 
-    public function delete(User $user, Article $article)
+    public function delete(User $user, Article $article): bool
     {
-        return $user-id === $article->user_id;
-        
+        return $user->id === $article->user->id;
     }
 }

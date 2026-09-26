@@ -34,4 +34,9 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Article::class, 'favorites');
     }
+
+    public function profile(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Profile::class);
+    }
 }

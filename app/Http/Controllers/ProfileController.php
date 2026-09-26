@@ -18,6 +18,7 @@ class ProfileController extends Controller
     {
         return view('profile.edit', [
             'user' => $request->user(),
+            'profile' => $request->user()->profile,
         ]);
     }
 
@@ -33,6 +34,27 @@ class ProfileController extends Controller
         }
 
         $request->user()->save();
+
+        // profilesテーブル側（表示名・自己紹介・アイコン）
+        $profileData = $request->validate([
+            'display_name' => ['nullable', 'string', 'max:50'],
+            'bio' => ['nullable', 'string', 'max:1000'],
+            'avatar' => ['nullable', 'image', 'max:5120'], // 5MB
+        ]);
+
+        $updates = [
+            'display_name' => $profileData['display_name'] ?? null,
+            'bio' => $profileData['bio'] ?? null,
+        ];
+
+        if ($request->hasFile('avatar')) {
+            $updates['avatar_path'] = $request->file('avatar')->store('avatars', 'public');
+        }
+
+        $request->user()->profile()->updateOrCreate(
+            ['user_id' => $request->user()->id],
+            $updates
+        );
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
