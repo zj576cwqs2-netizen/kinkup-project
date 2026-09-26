@@ -15,6 +15,15 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('articles.index')" :active="request()->routeIs('articles.index')">
+                        {{ __('記事一覧') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('articles.create')" :active="request()->routeIs('articles.create')">
+                        {{ __('新規投稿') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('histories.index')" :active="request()->routeIs('histories.index')">
+                        {{ __('閲覧履歴') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -69,6 +78,15 @@
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('articles.index')" :active="request()->routeIs('articles.index')">
+                {{ __('記事一覧') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('articles.create')" :active="request()->routeIs('articles.create')">
+                {{ __('新規投稿') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('histories.index')" :active="request()->routeIs('histories.index')">
+                {{ __('閲覧履歴') }}
             </x-responsive-nav-link>
         </div>
 
