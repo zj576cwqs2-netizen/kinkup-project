@@ -1,3 +1,12 @@
+# ---- フロントエンド資材のビルド用ステージ ----
+FROM node:20-alpine AS assets
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+# ---- PHPアプリ本体 ----
 FROM php:8.4-apache
 
 # 必要なパッケージ
@@ -42,6 +51,9 @@ WORKDIR /var/www/html
 COPY . .
 
 RUN composer install --no-dev --optimize-autoloader --no-interaction || true
+
+# ビルド済みのフロントエンド資材（public/build）を取り込む
+COPY --from=assets /app/public/build /var/www/html/public/build
 
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
