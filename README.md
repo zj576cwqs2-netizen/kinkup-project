@@ -1,61 +1,140 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 記事投稿サイト（Kink up）
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+【概要】
+記事の投稿や閲覧、編集ができるWebアプリケーション。
+会員登録したユーザーは、記事の投稿や他のユーザーが投稿した記事の閲覧・検索、レビューを投稿することができます。
 
-## About Laravel
+URL: https://kinkup-project.onrender.com/
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+※ Renderの無料プランを使用しているため、しばらくアクセスが無いとスリープし、次回アクセス時に起動まで50秒程度かかることがあります。また、無料プランはディスクが一時的なため、画像は再デプロイのタイミングで消える場合あり。
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+【実装機能】
+- ユーザー登録・ログイン・ログアウト
+- 記事投稿（タイトル、本文、画像）
+- 記事一覧表示・詳細表示
+- 自身で投稿した記事のみ、編集や削除が可能
+- 各種検索機能（キーワード、投稿日、投稿者）
+- マイページ（プロフィール編集）
+- マイページから記事の閲覧履歴を確認可能
+- お気に入り機能（Ajax）
+- レビュー機能（星評価＋コメント）
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 技術スタック
 
-## Learning Laravel
+### バックエンド
+- PHP 8.4.25
+- Laravel 13.32.0
+- MySQL 8.0.46（開発環境）／PostgreSQL（本番環境）
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### フロントエンド
+- Tailwind CSS 3.1.0
+- Alpine.js 3.4.2
+- Vite 8.0.0
+- Laravel Vite Plugin 3.1
+- PostCSS 8.4.31
+- Autoprefixer 10.4.2
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### インフラ
+- Docker（開発環境）
+- Render（本番環境）
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+### 開発ツール
+- Git / GitHub
+- Claude Code
+- Laravel Debugbar
 
-## Agentic Development
+## セットアップ方法
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
+### ①リポジトリのクローン
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone https://github.com/zj576cwqs2-netizen/kinkup-project
+cd kinkup-project
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### ②環境設定ファイルの準備
+```bash
+cp .env.example .env
+```
 
-## Contributing
+### ③Dockerコンテナの起動
+```bash
+docker compose up -d
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### ④依存関係のインストール
+```bash
+docker compose exec app composer install
+docker compose exec app npm install
+```
 
-## Code of Conduct
+### ⑤アプリケーションキーの生成
+```bash
+docker compose exec app php artisan key:generate
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### ⑥マイグレーション実行
+```bash
+docker compose exec app php artisan migrate
+```
 
-## Security Vulnerabilities
+### ⑦ストレージリンクの作成
+```bash
+docker compose exec app php artisan storage:link
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### ⑧フロントエンド資材のビルド（開発時）
+```bash
+docker compose exec app npm run dev
+```
 
-## License
+アプリは http://localhost:8080 でアクセスが可能となっています。
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 📸 スクリーンショット
 
+### トップページ
+![トップページ](docs/screenshots/top.png)
 
-投稿した記事一覧を、キーワードや投稿日、投稿者の3つで検索できるように実装
+### 記事一覧
+![記事一覧](docs/screenshots/article-list.png)
+
+### 記事詳細
+![記事詳細](docs/screenshots/article-detail.png)
+
+### 記事投稿
+![記事投稿](docs/screenshots/article-create.png)
+
+### 閲覧履歴
+![閲覧履歴](docs/screenshots/histories.png)
+
+## 工夫点
+
+### ①セキュリティ対策とパフォーマンスの最適化
+- CSRF保護、XSS対策、SQLインジェクション対策を実装
+- ファイルアップロード時にバリデーションを実装
+- N+1問題を解決（Eager Loading）
+
+### ②UI/UX
+- Tailwind CSSによって、モダンなデザインでのアプリ実装
+- Alpine.jsによって快適かつ素早い操作環境を構築
+- レスポンシブ対応により、様々なデバイスに対応したページ表示を実装
+
+### ③コード設計
+- Policyによって、記事の編集・削除権限を厳重に管理
+- FormRequestによるバリデーション分離の実装
+
+## 学習の記録
+この総合プロジェクトは、これまでTechmeetsで学んできたAI駆動開発カリキュラムの集大成として作成したWebアプリです。分からないところもたくさんありましたが、頑張って作成しました。
+
+### 今回修得した開発スキル
+- Laravel（MVC、認証、Eloquent ORM）
+- Docker（開発コンテナ環境の構築）
+- Git / GitHub（バージョン管理）
+- クラウドサービス（Render）へのデプロイ
+- テストの実施（手動テスト）
+- 設計（要件定義書作成、DB設計、API設計）
+
+## 作成者
+- GitHub: [zj576cwqs2-netizen](https://github.com/zj576cwqs2-netizen)
+
+## ライセンス
+MIT License
