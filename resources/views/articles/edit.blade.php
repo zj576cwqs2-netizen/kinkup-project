@@ -19,7 +19,7 @@
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('articles.update', $article) }}">
+               <form method="POST" action="{{ route('articles.update', $article) }}" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
 
@@ -36,7 +36,14 @@
                         <textarea id="content" name="content" rows="10"
                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
                                   required>{{ old('content', $article->content) }}</textarea>
-                    </div>
+                    </div><div>
+    <label for="image">画像（差し替える場合のみ選択）</label>
+    @if ($article->images->first())
+        <img src="{{ asset('storage/' . $article->images->first()->image_path) }}" alt="現在の画像" class="w-40 mb-2">
+    @endif
+    <input id="image" name="image" type="file" accept="image/*">
+    @error('image') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
+</div>
 
                     <div class="mb-6">
                         <label for="status" class="block font-medium text-sm text-gray-700">公開状態</label>

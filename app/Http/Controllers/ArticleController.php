@@ -89,6 +89,10 @@ class ArticleController extends Controller
      */
     public function show(Article $article)
     {
+{
+            Gate::authorize('update', $article);
+        }        if ($article->status !== 'published') 
+
         $article->load(['user', 'images', 'reviews.user']);
 
         ViewingHistory::updateOrCreate(
