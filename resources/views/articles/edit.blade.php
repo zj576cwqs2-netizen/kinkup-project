@@ -38,9 +38,6 @@
                                   required>{{ old('content', $article->content) }}</textarea>
                     </div><div>
     <label for="image">画像（差し替える場合のみ選択）</label>
-    @if ($article->images->first())
-        <img src="{{ asset('storage/' . $article->images->first()->image_path) }}" alt="現在の画像" class="w-40 mb-2">
-    @endif
     <input id="image" name="image" type="file" accept="image/*">
     @error('image') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
 </div>
